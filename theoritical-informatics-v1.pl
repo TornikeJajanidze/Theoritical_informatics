@@ -46,6 +46,7 @@ find_shortest_path(StartX, StartY, EndX, EndY) :-
     reverse(Path, RevPath),  % Reverse the path to get the correct order
     print_maze_with_path(4, 4, RevPath, Steps).
 
+
 % Check if the cell is open.
 is_cell_open(X, Y) :-
     cell(X, Y, open).
@@ -58,6 +59,8 @@ validate_coordinates(_, _) :-
 
 % Interactive user input for start and end points with validation.
 prompt_for_points :-
+    write('Initial Maze Layout: (O for open, B for blocked)'), nl,
+    print_maze_layout(4, 4), nl,
     repeat,
         write('Enter Start X: '), read(StartX),
         write('Enter Start Y: '), read(StartY),
@@ -68,5 +71,10 @@ prompt_for_points :-
         (is_cell_open(EndX, EndY) -> !; write('End point is blocked. Please re-enter.'), nl, fail),
     find_shortest_path(StartX, StartY, EndX, EndY).
 
+print_maze_layout(MaxX, MaxY) :-
+    forall(between(1, MaxX, X),
+           (forall(between(1, MaxY, Y),
+                    (cell(X, Y, open) -> write('O '); write('B '))),
+            nl)).  % New line at the end of each row
 % Initiate the search for the shortest path with user input.
 :- prompt_for_points.
